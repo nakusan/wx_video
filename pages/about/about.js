@@ -1,3 +1,7 @@
+import request from '../api/request';
+
+const app = getApp()
+
 // pages/about/about.js
 Page({
 
@@ -5,22 +9,74 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    avatarUrl: '',
+    nickName: '',
+    hasUserInfo: false
   },
 
-  demo:function(){
-    console.log("diandiandian");
+  onLoad() {
+    // 检查是否已有用户信息
+    if (app.globalData.userInfo) {
+      this.setData({
+        avatarUrl: app.globalData.userInfo.avatarUrl,
+        nickName: app.globalData.userInfo.nickName,
+        hasUserInfo: app.globalData.userInfo.nickName == '' ?  false : true
+      })
+    }
   },
 
-  change:function(e){
-    console.log(e);
+  onChooseAvatar(e) {
+    const { avatarUrl } = e.detail 
+    this.setData({
+      avatarUrl
+    })
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
+  onNicknameChange(e) {
+    this.setData({
+      nickName: e.detail.value
+    })
+  },
 
+   // 保存用户信息
+   async saveUserInfo() {
+    try {
+      // 上传头像到自己的服务器
+      const uploadRes = await this.uploadFile(this.data.avatarUrl)
+      
+      // 保存用户信息
+      await request.post('/user/profile',
+      {
+        avatarUrl: uploadRes.url,
+        nickName: this.data.nickName
+      })
+
+      wx.showToast({
+        title: '保存成功',
+        icon: 'success'
+      })
+    } catch (error) {
+      wx.showToast({
+        title: '保存失败',
+        icon: 'none'
+      })
+    }
+  },
+
+  // 上传文件方法
+  uploadFile(filePath) {
+    return new Promise((resolve, reject) => {
+      request.uploadFile({
+        url: '/upload',
+        filePath: filePath,
+        name: 'file',
+        success: res => {
+          const data = JSON.parse(res.data)
+          resolve(data)
+        },
+        fail: reject
+      })
+    })
   },
 
   /**

@@ -80,3 +80,26 @@
   border-top: 2px solid #eee;
   border-bottom: 2px solid #eee;
 }
+
+.avatar-wrapper {
+  padding: 0;
+  width: 56px !important;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+
+.weui-input{
+  text-align: center;
+}
+
+.save-btn{
+  margin-top: 40rpx;
+  background: #07c160;
+  color: #fff;
+}
