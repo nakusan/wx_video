@@ -74,12 +74,17 @@ function uploadFile(options) {
       success: (res) => {
         if (res.statusCode === 200) {
           // 注意：uploadFile 的响应数据是字符串
-          const data = JSON.parse(res.data)
-          resolve(data)
+          console.log('success>>')
+          console.log(res)
+          const result = JSON.parse(res.data)
+          console.log(result.data)
+          resolve(result.data)
         } else if (res.statusCode === 401) {
+          console.log('401>>')
           // wx.redirectTo({ url: '/pages/login/login' })
           reject(new Error('未登录或登录已过期'))
         } else {
+          console.log('fail>>')
           reject(new Error('上传失败'))
         }
       },

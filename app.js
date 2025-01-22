@@ -17,6 +17,8 @@ App({
           console.log('start to fetch token from remote server...')
           request.post('/api/login', res.code)
           .then(resp => {
+            console.log('login success...')
+            console.log(resp)
             if(resp && resp.data && resp.data.data){
               wx.setStorageSync(this.globalData.tokenKey, resp.data.data.token)
               this.loadUserInfo()
@@ -33,7 +35,6 @@ App({
     try {
       const token = wx.getStorageSync(this.globalData.tokenKey)
       if (!token) return
-
       const result = await request.get('/api/user/profile')
       this.globalData.userInfo = result.data
     } catch (error) {

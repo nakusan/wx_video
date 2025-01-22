@@ -42,12 +42,16 @@ Page({
    async saveUserInfo() {
     try {
       // 上传头像到自己的服务器
-      const uploadRes = await this.uploadFile(this.data.avatarUrl)
-      
+      console.log('ready to upload avatar...')
+      const uploadRes = await request.uploadFile({
+        url: '/api/file/upload',
+        filePath: this.data.avatarUrl,
+        name: 'file'
+      })
       // 保存用户信息
-      await request.post('/user/profile',
+      await request.post('/api/user/profile',
       {
-        avatarUrl: uploadRes.url,
+        avatarUrl: uploadRes.path,
         nickName: this.data.nickName
       })
 
@@ -61,22 +65,6 @@ Page({
         icon: 'none'
       })
     }
-  },
-
-  // 上传文件方法
-  uploadFile(filePath) {
-    return new Promise((resolve, reject) => {
-      request.uploadFile({
-        url: '/upload',
-        filePath: filePath,
-        name: 'file',
-        success: res => {
-          const data = JSON.parse(res.data)
-          resolve(data)
-        },
-        fail: reject
-      })
-    })
   },
 
   /**
