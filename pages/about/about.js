@@ -11,7 +11,19 @@ Page({
   data: {
     avatarUrl: '',
     nickName: '',
-    hasUserInfo: false
+    hasUserInfo: false,
+    historyItems: [
+      {
+        "thumbUrl": "../../images/swiper1.jpg", 
+        "videoTitle": "测试，哈哈",
+        "url": "https://api.dongqiudi.com/v2/articles/video_info/484567"
+      },
+      {
+        "thumbUrl": "../../images/swiper2.jpg", 
+        "videoTitle": "good",
+        "url": "https://api.dongqiudi.com/v2/articles/video_info/481522"
+      }
+    ]
   },
 
   onLoad() {
@@ -23,6 +35,7 @@ Page({
         hasUserInfo: app.globalData.userInfo.nickName == '' ?  false : true
       })
     }
+    this.getUserVisitHistory();
   },
 
   onChooseAvatar(e) {
@@ -42,7 +55,6 @@ Page({
    async saveUserInfo() {
     try {
       // 上传头像到自己的服务器
-      console.log('ready to upload avatar...')
       const uploadRes = await request.uploadFile({
         url: '/api/file/upload',
         filePath: this.data.avatarUrl,
@@ -67,6 +79,30 @@ Page({
     }
   },
 
+  async getUserVisitHistory() {
+    try {
+      const historyItems = await request.get('/api/video-info/getUserVisitInfo')
+      this.setData({
+        historyItems: historyItems
+      })
+    } catch (error) {
+      console.error('获取访问历史记录失败')
+      wx.showToast({
+        title: '获取访问历史记录失败',
+        icon: 'none'
+      })
+    }
+  },
+
+  onHistoryItemClick(event) {
+    console.log('click history')
+    console.log(event)
+    var url = event.currentTarget.dataset.video.url;
+    var title = event.currentTarget.dataset.video.title;
+    wx.navigateTo({
+      url: '../video/video?url=' + url + "&title=" + title
+    })
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */

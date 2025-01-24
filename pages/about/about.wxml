@@ -21,26 +21,9 @@
       <text class="view-more">查看更多 ></text>
     </view>
     <scroll-view class="history-content" scroll-x="true" scroll-with-animation="true">
-      <!-- Sample Items -->
-      <view class="history-item">
-        <image class="history-image" src="../../images/swiper1.jpg"></image>
-        <text class="history-title">咋呗</text>
-      </view>
-      <view class="history-item">
-        <image class="history-image" src="../../images/swiper2.jpg"></image>
-        <text class="history-title">小心下水管道...</text>
-      </view>
-      <view class="history-item">
-        <image class="history-image" src="../../images/swiper3.jpg"></image>
-        <text class="history-title">会喝油管千...</text>
-      </view>
-      <view class="history-item">
-        <image class="history-image" src="../../images/swiper2.jpg"></image>
-        <text class="history-title">小心下水管道...</text>
-      </view>
-      <view class="history-item">
-        <image class="history-image" src="../../images/swiper3.jpg"></image>
-        <text class="history-title">会喝油管千...</text>
+      <view class="history-item" wx:for="{{historyItems}}" wx:for-item="video" data-video="{{video}}" wx:key="*this" bindtap="onHistoryItemClick">
+        <image class="history-image" src="{{video.thumbUrl}}"></image>
+        <text class="history-title">{{video.videoTitle}}</text>
       </view>
     </scroll-view>
   </view>
