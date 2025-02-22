@@ -1,3 +1,5 @@
+import request from '../api/request';
+
 // pages/index/index.js
 Page({
 
@@ -16,43 +18,77 @@ Page({
       title: '刷新中...'
     });
     var that = this;
-    wx.request({
-      url: 'https://api.dongqiudi.com/old/columns/138?page=', //你的接口地址
-      success(res) {
-        var data = res.data;
-        var articles = data.data;
-        console.log(articles)
-        var videos = [];
-        for (var i = 0; i < articles.length; i++) {
-          var video = {};
-          video.title = articles[i].title;
-          video.thumb = articles[i].litpic;
-          video.url = "https://api.dongqiudi.com/v2/articles/video_info/" + articles[i].aid;
-          videos.push(video);
-        }
-        console.log(videos)
-        that.setData({ 
-          rows: videos
-        })
-      },
-      fail(err) {
-        console.error('请求失败:', err)
-        wx.hideLoading();
-        wx.showToast({
-          title: '刷新失败',
-          icon: 'success',
-          duration: 2000
-        })
-      },
-      complete: function() {
-        wx.hideLoading();
-      }
-    })
+    request.get('/api/video-info/queryVideoInfoList/1')
+          .then(resp => {
+            console.log('queryVideoInfoList success!')
+            var videoResults = resp.data.data;
+            console.log(videoResults)
+            var videos = [];
+            for (var i = 0; i < videoResults.length; i++) {
+              var video = {};
+              video.id = videoResults[i].videoId;
+              video.title = videoResults[i].videoTitle;
+              video.thumb = videoResults[i].thumbUrl;
+              video.url = videoResults[i].videoPath;
+              videos.push(video);
+            }
+            console.log(videos)
+            that.setData({ 
+              rows: videos
+            }, ()=>{
+              wx.hideLoading();
+            })
+          }).catch(error => {
+            console.error(error)
+          })
+    // wx.request({
+    //   url: 'https://api.dongqiudi.com/old/columns/138?page=', //你的接口地址
+    //   success(res) {
+    //     var data = res.data;
+    //     var articles = data.data;
+    //     console.log(articles)
+    //     var videos = [];
+    //     for (var i = 0; i < articles.length; i++) {
+    //       var video = {};
+    //       video.title = articles[i].title;
+    //       video.thumb = articles[i].litpic;
+    //       video.url = "https://api.dongqiudi.com/v2/articles/video_info/" + articles[i].aid;
+    //       videos.push(video);
+    //     }
+    //     console.log(videos)
+    //     that.setData({ 
+    //       rows: videos
+    //     })
+    //   },
+    //   fail(err) {
+    //     console.error('请求失败:', err)
+    //     wx.hideLoading();
+    //     wx.showToast({
+    //       title: '刷新失败',
+    //       icon: 'success',
+    //       duration: 2000
+    //     })
+    //   },
+    //   complete: function() {
+    //     wx.hideLoading();
+    //   }
+    // })
   },
 
   onItemClick: function (event) {
     var url = event.currentTarget.dataset.video.url;
     var title = event.currentTarget.dataset.video.title;
+    console.log('click')
+    console.log(event.currentTarget.dataset.video)
+    request.post('/api/video-info/saveUserVisitLog', 
+      event.currentTarget.dataset.video.id)
+          .then(resp => {
+            console.log('saveUserVisitLog success!')
+            console.log(resp)
+          
+          }).catch(error => {
+            console.error(error)
+          })
     wx.navigateTo({
       url: '../video/video?url=' + url + "&title=" + title
     })

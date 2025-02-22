@@ -82,8 +82,10 @@ Page({
   async getUserVisitHistory() {
     try {
       const historyItems = await request.get('/api/video-info/getUserVisitInfo')
+      console.log('historyItems===')
+      console.log(historyItems.data.data)
       this.setData({
-        historyItems: historyItems
+        historyItems: historyItems.data.data
       })
     } catch (error) {
       console.error('获取访问历史记录失败')
